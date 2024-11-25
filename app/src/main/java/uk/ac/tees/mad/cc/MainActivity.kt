@@ -11,6 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import uk.ac.tees.mad.cc.screens.Splash
 import uk.ac.tees.mad.cc.ui.theme.CurrencyConverterAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,29 +23,26 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CurrencyConverterAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                navigate()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+
+sealed class NavigationItems(val route : String){
+    object Splash : NavigationItems(route = "splash")
 }
 
-@Preview(showBackground = true)
+
+
 @Composable
-fun GreetingPreview() {
-    CurrencyConverterAppTheme {
-        Greeting("Android")
+fun navigate(){
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = NavigationItems.Splash.route){
+        composable(NavigationItems.Splash.route){
+            Splash()
+        }
+
     }
 }
