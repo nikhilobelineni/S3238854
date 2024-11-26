@@ -8,7 +8,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -25,8 +27,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import uk.ac.tees.mad.cc.R
+import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @Composable
 fun Splash() {
@@ -64,6 +69,9 @@ fun Splash() {
                 contentDescription = "Logo"
             )
         }
-        Text(text = "Currency Convertor")
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Currency Convertor App", fontFamily = poppins, fontWeight = FontWeight.SemiBold,
+            fontSize = 25.sp)
+        Text(text = "The best place to calculate foreign rate")
     }
 }
