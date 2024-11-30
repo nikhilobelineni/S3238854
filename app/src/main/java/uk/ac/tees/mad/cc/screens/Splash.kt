@@ -2,7 +2,6 @@ package uk.ac.tees.mad.cc.screens
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +17,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,14 +28,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import kotlinx.coroutines.delay
+import uk.ac.tees.mad.cc.AppViewModel
+import uk.ac.tees.mad.cc.NavigationItems
 import uk.ac.tees.mad.cc.R
 import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @Composable
-fun Splash() {
+fun Splash(vm: AppViewModel, navController: NavHostController) {
     val scale = remember { Animatable(0.8f) }
     val alpha = remember { Animatable(0f) }
 
+
+    LaunchedEffect(key1 = true) {
+        delay(3000)
+        navController.navigate(NavigationItems.SignUp.route)
+    }
     LaunchedEffect(Unit) {
         scale.animateTo(
             targetValue = 1f,
