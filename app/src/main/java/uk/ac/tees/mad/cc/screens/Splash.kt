@@ -43,7 +43,7 @@ fun Splash(vm: AppViewModel, navController: NavHostController) {
 
     LaunchedEffect(key1 = true) {
         delay(3000)
-        navController.navigate(NavigationItems.SignUp.route)
+        navController.navigate(NavigationItems.LogIn.route)
     }
     LaunchedEffect(Unit) {
         scale.animateTo(
