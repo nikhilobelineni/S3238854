@@ -94,8 +94,8 @@ fun LogIn(vm: AppViewModel, navController: NavHostController) {
             Text(text = "LOG IN")
         }
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = "Already have an account? Sign In", fontFamily = poppins, modifier = Modifier.padding(bottom = 70.dp).clickable {
-            navController.popBackStack()
+        Text(text = "Don't have an account? Sign Up", fontFamily = poppins, modifier = Modifier.padding(bottom = 70.dp).clickable {
+            navController.navigate(NavigationItems.SignUp.route)
         })
     }
 }

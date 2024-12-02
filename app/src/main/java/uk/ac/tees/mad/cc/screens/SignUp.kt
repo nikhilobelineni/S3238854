@@ -37,6 +37,8 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @Composable
 fun SignUp(vm: AppViewModel, navController: NavHostController) {
+    var name by remember { mutableStateOf("") }
+    var number by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     Column(
@@ -44,28 +46,21 @@ fun SignUp(vm: AppViewModel, navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(150.dp))
-        Image(
-            painter = painterResource(id = R.drawable.applogo), contentDescription = null,
-            modifier = Modifier
-                .size(180.dp)
-                .clip(RoundedCornerShape(13.dp))
-        )
-        Spacer(modifier = Modifier.height(20.dp))
         Text(
-            text = "Welcome back!",
+            text = "Let's Get Started!",
             fontFamily = poppins,
             fontWeight = FontWeight.SemiBold,
             fontSize = 24.sp
         )
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = "Log in to existing account",
+            text = "Create an account to get started",
             fontFamily = poppins,
             fontWeight = FontWeight.Normal,
             fontSize = 17.sp
         )
         Spacer(modifier = Modifier.height(30.dp))
-        OutlinedTextField(value = email, onValueChange = { email = it },
+        OutlinedTextField(value = name, onValueChange = { name = it },
             label = {
                 Text(
                     text = "Email",
@@ -74,8 +69,8 @@ fun SignUp(vm: AppViewModel, navController: NavHostController) {
                     fontSize = 17.sp
                 )
             })
-        Spacer(modifier = Modifier.height(10.dp))
-        OutlinedTextField(value = password, onValueChange = { password = it },
+        Spacer(modifier = Modifier.height(20.dp))
+        OutlinedTextField(value = email, onValueChange = { email = it },
             label = {
                 Text(
                     text = "Password",
@@ -85,6 +80,26 @@ fun SignUp(vm: AppViewModel, navController: NavHostController) {
                 )
             })
         Spacer(modifier = Modifier.height(20.dp))
+        OutlinedTextField(value = number, onValueChange = { number = it },
+            label = {
+                Text(
+                    text = "Password",
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 17.sp
+                )
+            })
+        Spacer(modifier = Modifier.height(20.dp))
+        OutlinedTextField(value = password, onValueChange = { password = it },
+            label = {
+                Text(
+                    text = "Password",
+                    fontFamily = poppins,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 17.sp
+                )
+            })
+        Spacer(modifier = Modifier.height(40.dp))
         Button(
             onClick = { /*TODO*/ },
             modifier = Modifier.width(280.dp),
@@ -93,7 +108,7 @@ fun SignUp(vm: AppViewModel, navController: NavHostController) {
                 Color.Black.copy(alpha = 0.3f)
             )
         ) {
-            Text(text = "LOG IN")
+            Text(text = "SIGN UP")
         }
         Spacer(modifier = Modifier.weight(1f))
         Text(text = "Don't have an account? Sign Up", fontFamily = poppins, modifier = Modifier.padding(bottom = 70.dp).clickable {
