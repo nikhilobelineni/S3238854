@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "569441102268",
+    "project_id": "currency-converter-app-3d70d",
+    "storage_bucket": "currency-converter-app-3d70d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:569441102268:android:0b8c6f815b889d8df5e3b9",
+        "android_client_info": {
+          "package_name": "uk.ac.tees.mad.cc"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDUNYzp7dCA4EnrRcMXi9S8r3p4FQyJeTk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
