@@ -29,7 +29,7 @@ class AppViewModel @Inject constructor(
     }
 
     fun signUp(context: Context, name: String, email: String, password: String, number: String) {
-        isLoading.value = true // Start loading
+        isLoading.value = true
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResult ->
@@ -47,6 +47,8 @@ class AppViewModel @Inject constructor(
                     .addOnSuccessListener {
                         isLoading.value = false
                         isSignedIn.value = true
+
+                        fetchUserData()
 
                         Toast.makeText(context, "Sign up successful!", Toast.LENGTH_SHORT).show()
 
@@ -70,13 +72,32 @@ class AppViewModel @Inject constructor(
     }
 
 
-    fun logIn(context: Context, email: String, password: String){
-        auth.createUserWithEmailAndPassword(email, password).addOnSuccessListener {
+    fun logIn(context: Context, email: String, password: String) {
+        isLoading.value = true
 
-        }
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener { authResult ->
+                isLoading.value = false
+                isSignedIn.value = true
+
+                fetchUserData()
+
+                Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
+
+                Log.d("Login", "User successfully logged in: ${authResult.user!!.uid}")
+            }
+            .addOnFailureListener { e ->
+                isLoading.value = false
+
+                Toast.makeText(context, "Login failed: ${e.message}", Toast.LENGTH_SHORT).show()
+
+                Log.e("Login", "Login failed", e)
+            }
     }
 
+    fun fetchUserData(){
 
+    }
 
     fun fetchLatestRates() {
         Log.d("AppViewModel", "Fetching latest rates...")

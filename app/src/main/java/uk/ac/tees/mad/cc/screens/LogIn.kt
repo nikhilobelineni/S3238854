@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,6 +38,15 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 fun LogIn(vm: AppViewModel, navController: NavHostController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val isSignedIn = vm.isSignedIn
+
+    if (isSignedIn.value){
+        navController.navigate(NavigationItems.Home.route){
+            popUpTo(0)
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -84,7 +94,7 @@ fun LogIn(vm: AppViewModel, navController: NavHostController) {
             })
         Spacer(modifier = Modifier.height(20.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { vm.logIn(context = context, email, password) },
             modifier = Modifier.width(280.dp),
             shape = RoundedCornerShape(5.dp),
             colors = ButtonDefaults.buttonColors(

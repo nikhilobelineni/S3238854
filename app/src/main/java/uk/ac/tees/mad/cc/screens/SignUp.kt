@@ -20,11 +20,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import uk.ac.tees.mad.cc.AppViewModel
+import uk.ac.tees.mad.cc.NavigationItems
 import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @Composable
@@ -33,6 +35,17 @@ fun SignUp(vm: AppViewModel, navController: NavHostController) {
     var number by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+
+    val isSignedIn = vm.isSignedIn
+
+    if (isSignedIn.value){
+        navController.navigate(NavigationItems.Home.route){
+            popUpTo(0)
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -93,7 +106,7 @@ fun SignUp(vm: AppViewModel, navController: NavHostController) {
             })
         Spacer(modifier = Modifier.height(40.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { vm.signUp(context = context, name, email, password, number) },
             modifier = Modifier.width(280.dp),
             shape = RoundedCornerShape(5.dp),
             colors = ButtonDefaults.buttonColors(
