@@ -26,6 +26,10 @@ class AppViewModel @Inject constructor(
 
     init {
         fetchLatestRates()
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            isSignedIn.value = true
+        }
     }
 
     fun signUp(context: Context, name: String, email: String, password: String, number: String) {
