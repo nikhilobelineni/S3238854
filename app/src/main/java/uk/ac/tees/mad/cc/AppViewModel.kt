@@ -10,8 +10,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import uk.ac.tees.mad.cc.data.CurrencyApiService
+import uk.ac.tees.mad.cc.model.CurrencyResponse
+import uk.ac.tees.mad.cc.model.Data
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,6 +26,9 @@ class AppViewModel @Inject constructor(
 
     val isLoading = mutableStateOf(false)
     val isSignedIn = mutableStateOf(false)
+
+    val currencyRates = MutableStateFlow<CurrencyResponse?>(null)
+
 
     init {
         fetchLatestRates()
@@ -103,6 +109,34 @@ class AppViewModel @Inject constructor(
 
     }
 
+    fun convertCurrency(amount: Double, fromCurrency: String, toCurrency: String): Double? {
+        val rates = currencyRates.value?.data ?: return null
+        val fromValue = rates.getCurrencyValue(fromCurrency)
+        val toValue = rates.getCurrencyValue(toCurrency)
+        return if (fromValue != null && toValue != null) {
+            (amount / fromValue) * toValue
+        } else {
+            null
+        }
+    }
+
+    private fun Data.getCurrencyValue(currencyCode: String): Double? {
+        return when (currencyCode) {
+            "AUD" -> AUD.value
+            "BRL" -> BRL.value
+            "CAD" -> CAD.value
+            "CHF" -> CHF.value
+            "CNY" -> CNY.value
+            "EUR" -> EUR.value
+            "GBP" -> GBP.value
+            "INR" -> INR.value
+            "JPY" -> JPY.value
+            "USD" -> USD.value.toDouble()
+            else -> null
+        }
+    }
+
+
     fun fetchLatestRates() {
         Log.d("AppViewModel", "Fetching latest rates...")
         viewModelScope.launch {
@@ -111,9 +145,9 @@ class AppViewModel @Inject constructor(
                     apiKey = "cur_live_5sd2N8xnqJyI8ozbrxWkHqrbzHeFvMlSEANNMEtM",
                     currencies = "USD,EUR,GBP,JPY,AUD,CAD,CHF,CNY,INR,BRL"
                 )
+                currencyRates.value = response
                 Log.d("AppViewModel", "Response: $response")
             } catch (e: Exception) {
-                // Handle the error here
                 Log.e("AppViewModel", "Error fetching latest rates", e)
             }
         }
