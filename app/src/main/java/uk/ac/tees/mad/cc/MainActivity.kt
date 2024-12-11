@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import uk.ac.tees.mad.cc.screens.Home
 import uk.ac.tees.mad.cc.screens.LogIn
+import uk.ac.tees.mad.cc.screens.Result
 import uk.ac.tees.mad.cc.screens.SignUp
 import uk.ac.tees.mad.cc.screens.Splash
 import uk.ac.tees.mad.cc.ui.theme.CurrencyConverterAppTheme
@@ -34,6 +35,9 @@ sealed class NavigationItems(val route : String){
     object LogIn : NavigationItems(route = "login")
     object SignUp : NavigationItems(route = "signup")
     object Home : NavigationItems(route = "home")
+    object Result : NavigationItems(route = "result/{currency}"){
+        fun createRoute(currency : String) = "result/$currency"
+    }
 }
 
 
@@ -54,6 +58,10 @@ fun navigate(){
         }
         composable(NavigationItems.SignUp.route){
             SignUp(vm, navController)
+        }
+        composable(NavigationItems.Result.route){
+            val currency = it.arguments?.getString("currency")
+            Result(vm, navController, currency)
         }
     }
 }

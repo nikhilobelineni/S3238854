@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Button
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import uk.ac.tees.mad.cc.AppViewModel
+import uk.ac.tees.mad.cc.NavigationItems
 import uk.ac.tees.mad.cc.currencyList
 import uk.ac.tees.mad.cc.ui.theme.poppins
 
@@ -45,7 +47,7 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 fun Home(vm: AppViewModel, navController: NavHostController) {
     vm.fetchLatestRates()
     val rates by vm.currencyRates.collectAsState()
-    var amount by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf("0") }
     var fromCurrency by remember { mutableStateOf("INR") }
     var toCurrency by remember { mutableStateOf("USD") }
     var convertedAmount by remember { mutableStateOf<Double?>(null) }
@@ -149,20 +151,19 @@ fun Home(vm: AppViewModel, navController: NavHostController) {
                 TextField(
                     value = amount,
                     onValueChange = { amount = it },
-                    label = { Text("Amount") }
+                    label = { Text("Amount") }, modifier = Modifier.fillMaxWidth()
                 )
+                Spacer(modifier = Modifier.size(16.dp))
                 Button(onClick = {
-                    val amountValue = amount.toDoubleOrNull()
-                    if (amountValue != null) {
-                        convertedAmount = vm.convertCurrency(amountValue, fromCurrency, toCurrency)
-                    }
-                }) {
+                    navController.navigate(NavigationItems.Result.createRoute(currency = amount?:""))
+                }, modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(5.dp),
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = Color.Blue,
+                        contentColor = Color.White
+                    )
+                ) {
                     Text("Convert")
-                }
-                if (convertedAmount != null) {
-                    Text("Converted Value: $convertedAmount $toCurrency")
-                } else if (rates == null) {
-                    Text("Loading rates...")
                 }
             }
         }
