@@ -35,8 +35,8 @@ sealed class NavigationItems(val route : String){
     object LogIn : NavigationItems(route = "login")
     object SignUp : NavigationItems(route = "signup")
     object Home : NavigationItems(route = "home")
-    object Result : NavigationItems(route = "result/{currency}"){
-        fun createRoute(currency : String) = "result/$currency"
+    object Result : NavigationItems(route = "result/{currency}/{fromCurrency}"){
+        fun createRoute(currency : String, fromCurrency : String) = "result/$currency/$fromCurrency"
     }
 }
 
@@ -61,7 +61,8 @@ fun navigate(){
         }
         composable(NavigationItems.Result.route){
             val currency = it.arguments?.getString("currency")
-            Result(vm, navController, currency)
+            val fromCurrency = it.arguments?.getString("fromCurrency")
+            Result(vm, navController, currency, fromCurrency)
         }
     }
 }

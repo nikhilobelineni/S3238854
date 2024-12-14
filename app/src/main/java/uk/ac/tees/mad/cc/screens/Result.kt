@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,17 +39,43 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Result(vm: AppViewModel, navController: NavHostController, currency: String?) {
+fun Result(
+    vm: AppViewModel,
+    navController: NavHostController,
+    currency: String?,
+    fromCurrency: String?,
+) {
 
     var currentCurrency by remember {
-        mutableStateOf("EUR")
+        mutableStateOf(fromCurrency)
+    }
+    var secondCurrency by remember {
+        mutableStateOf("USD")
     }
 
     val showList = remember {
         mutableStateOf(false)
     }
+    val showList2 = remember {
+        mutableStateOf(false)
+    }
 
-    val price = currency
+    var price by remember {
+        mutableStateOf(currency ?: "")
+    }
+    var result by remember {
+        mutableStateOf("0")
+    }
+
+    LaunchedEffect(key1 = price) {
+        val amount = price.toDoubleOrNull()
+        if (amount != null && currentCurrency != null) {
+            val convertedValue = vm.convertCurrency(amount, currentCurrency!!, secondCurrency)
+            result = "%.2f".format(convertedValue)
+        } else {
+            result = "Invalid input"
+        }
+    }
 
     Box {
         Column(
@@ -64,38 +93,189 @@ fun Result(vm: AppViewModel, navController: NavHostController, currency: String?
                     color = Color.White
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                Text(text = currentCurrency, fontFamily = poppins, fontSize = 20.sp, modifier = Modifier.clickable {
-                    showList.value = true
-                }, color = Color.White)
+                Text(
+                    text = currentCurrency!!,
+                    fontFamily = poppins,
+                    fontSize = 20.sp,
+                    modifier = Modifier.clickable {
+                        showList.value = true
+                    },
+                    color = Color.White
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     Icon(
-                        painter = painterResource(when (currentCurrency) {
-                            "USD" -> R.drawable.us_dollar
-                            "GBP" -> R.drawable.gbp
-                            "EUR" -> R.drawable.eurologo
-                            "JPY" -> R.drawable.yen
-                            "AUD" -> R.drawable.money
-                            "CAD" -> R.drawable.canadian_dollar_logo
-                            "CHF" -> R.drawable.chf
-                            "CNY" -> R.drawable.head
-                            "INR" -> R.drawable.rupee
-                            "BRL" -> R.drawable.brazilian_real
-                            else -> {
-                                R.drawable.euro
+                        painter = painterResource(
+                            when (currentCurrency) {
+                                "USD" -> R.drawable.us_dollar
+                                "GBP" -> R.drawable.gbp
+                                "EUR" -> R.drawable.eurologo
+                                "JPY" -> R.drawable.yen
+                                "AUD" -> R.drawable.money
+                                "CAD" -> R.drawable.canadian_dollar_logo
+                                "CHF" -> R.drawable.chf
+                                "CNY" -> R.drawable.head
+                                "INR" -> R.drawable.rupee
+                                "BRL" -> R.drawable.brazilian_real
+                                else -> {
+                                    R.drawable.euro
+                                }
                             }
-                        }),
+                        ),
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier.size(30.dp)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = currency.toString())
+                    Spacer(modifier = Modifier.width(16.dp))
+                    TextField(
+                        value = price, onValueChange = { price = it },
+                        colors = androidx.compose.material3.TextFieldDefaults.textFieldColors(
+                            containerColor = Color.Transparent,
+                            cursorColor = Color.White,
+                            focusedIndicatorColor = Color.White,
+                            unfocusedIndicatorColor = Color.White
+                        ),
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            color = Color.White,
+                            fontSize = 60.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                Icon(painter = painterResource(id = R.drawable.swap), contentDescription = "swap",
+                    tint = Color.White, modifier = Modifier
+                        .padding(16.dp)
+                        .size(40.dp)
+                        .clickable {})
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = secondCurrency,
+                    fontFamily = poppins,
+                    fontSize = 20.sp,
+                    modifier = Modifier.clickable {
+                        showList2.value = true
+                    },
+                    color = Color.White
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Row {
+                    Icon(
+                        painter = painterResource(
+                            when (secondCurrency) {
+                                "USD" -> R.drawable.us_dollar
+                                "GBP" -> R.drawable.gbp
+                                "EUR" -> R.drawable.eurologo
+                                "JPY" -> R.drawable.yen
+                                "AUD" -> R.drawable.money
+                                "CAD" -> R.drawable.canadian_dollar_logo
+                                "CHF" -> R.drawable.chf
+                                "CNY" -> R.drawable.head
+                                "INR" -> R.drawable.rupee
+                                "BRL" -> R.drawable.brazilian_real
+                                else -> {
+                                    R.drawable.euro
+                                }
+                            }
+                        ),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(30.dp)
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    TextField(
+                        value = result, onValueChange = { result = it },
+                        colors = androidx.compose.material3.TextFieldDefaults.textFieldColors(
+                            containerColor = Color.Transparent,
+                            cursorColor = Color.White,
+                            focusedIndicatorColor = Color.White,
+                            unfocusedIndicatorColor = Color.White
+                        ),
+                        textStyle = androidx.compose.ui.text.TextStyle(
+                            color = Color.White,
+                            fontSize = 60.sp,
+                            fontFamily = poppins,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    )
                 }
             }
         }
         if (showList.value) {
+            showList2.value = false
             AlertDialog(onDismissRequest = { showList.value = false }) {
+                Card {
+                    Column {
+                        for (item in currencyList) {
+                            Row(modifier = Modifier
+                                .padding(4.dp)
+                                .clickable {
+                                    when (item.name) {
+                                        "United States Dollar" -> {
+                                            currentCurrency = "USD"
+                                        }
+
+                                        "United Kingdom Pound" -> {
+                                            currentCurrency = "GBP"
+                                        }
+
+                                        "Euro" -> {
+                                            currentCurrency = "EUR"
+                                        }
+
+                                        "Japanese Yen" -> {
+                                            currentCurrency = "JPY"
+                                        }
+
+                                        "Australian Dollar" -> {
+                                            currentCurrency = "AUD"
+                                        }
+
+                                        "Canadian Dollar" -> {
+                                            currentCurrency = "CAD"
+                                        }
+
+                                        "Swiss Franc" -> {
+                                            currentCurrency = "CHF"
+                                        }
+
+                                        "Chinese Yuan" -> {
+                                            currentCurrency = "CNY"
+                                        }
+
+                                        "Indian Rupee" -> {
+                                            currentCurrency = "INR"
+                                        }
+
+                                        "Brazilian Real" -> {
+                                            currentCurrency = "BRL"
+                                        }
+
+                                        else -> {
+                                            currentCurrency = "INR"
+                                        }
+                                    }
+                                }) {
+                                Image(
+                                    painter = painterResource(id = item.icon),
+                                    contentDescription = item.name,
+                                    modifier = Modifier.size(40.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = item.name,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (showList2.value) {
+            showList.value = false
+            AlertDialog(onDismissRequest = { showList2.value = false }) {
                 Column {
                     for (item in currencyList) {
                         Row(modifier = Modifier
@@ -103,47 +283,47 @@ fun Result(vm: AppViewModel, navController: NavHostController, currency: String?
                             .clickable {
                                 when (item.name) {
                                     "United States Dollar" -> {
-                                        currentCurrency = "USD"
+                                        secondCurrency = "USD"
                                     }
 
                                     "United Kingdom Pound" -> {
-                                        currentCurrency = "GBP"
+                                        secondCurrency = "GBP"
                                     }
 
                                     "Euro" -> {
-                                        currentCurrency = "EUR"
+                                        secondCurrency = "EUR"
                                     }
 
                                     "Japanese Yen" -> {
-                                        currentCurrency = "JPY"
+                                        secondCurrency = "JPY"
                                     }
 
                                     "Australian Dollar" -> {
-                                        currentCurrency = "AUD"
+                                        secondCurrency = "AUD"
                                     }
 
                                     "Canadian Dollar" -> {
-                                        currentCurrency = "CAD"
+                                        secondCurrency = "CAD"
                                     }
 
                                     "Swiss Franc" -> {
-                                        currentCurrency = "CHF"
+                                        secondCurrency = "CHF"
                                     }
 
                                     "Chinese Yuan" -> {
-                                        currentCurrency = "CNY"
+                                        secondCurrency = "CNY"
                                     }
 
                                     "Indian Rupee" -> {
-                                        currentCurrency = "INR"
+                                        secondCurrency = "INR"
                                     }
 
                                     "Brazilian Real" -> {
-                                        currentCurrency = "BRL"
+                                        secondCurrency = "BRL"
                                     }
 
                                     else -> {
-                                        currentCurrency = "INR"
+                                        secondCurrency = "INR"
                                     }
                                 }
                             }) {

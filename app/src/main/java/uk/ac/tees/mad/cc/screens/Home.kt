@@ -46,9 +46,8 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 @Composable
 fun Home(vm: AppViewModel, navController: NavHostController) {
     vm.fetchLatestRates()
-    val rates by vm.currencyRates.collectAsState()
-    var amount by remember { mutableStateOf("0") }
-    var fromCurrency by remember { mutableStateOf("INR") }
+    var amount by remember { mutableStateOf("") }
+    var fromCurrency by remember { mutableStateOf("EUR") }
     var toCurrency by remember { mutableStateOf("USD") }
     var convertedAmount by remember { mutableStateOf<Double?>(null) }
 
@@ -155,7 +154,12 @@ fun Home(vm: AppViewModel, navController: NavHostController) {
                 )
                 Spacer(modifier = Modifier.size(16.dp))
                 Button(onClick = {
-                    navController.navigate(NavigationItems.Result.createRoute(currency = amount?:""))
+                    navController.navigate(NavigationItems.Result.createRoute(currency = if (amount.isBlank()){
+                        "0"
+                    }else{
+                        amount
+                    },
+                        fromCurrency = fromCurrency))
                 }, modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(5.dp),
                     colors = androidx.compose.material3.ButtonDefaults.buttonColors(
