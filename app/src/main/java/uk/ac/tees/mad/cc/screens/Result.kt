@@ -148,7 +148,17 @@ fun Result(
                     tint = Color.White, modifier = Modifier
                         .padding(16.dp)
                         .size(40.dp)
-                        .clickable {})
+                        .clickable {
+                            val tempCurrency = currentCurrency
+                            if (tempCurrency != null) {
+                                secondCurrency = tempCurrency
+                            }
+                            currentCurrency = secondCurrency
+
+                            val tempPrice = price
+                            result = tempPrice
+                            price = result
+                        })
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = secondCurrency,
@@ -276,67 +286,69 @@ fun Result(
         if (showList2.value) {
             showList.value = false
             AlertDialog(onDismissRequest = { showList2.value = false }) {
-                Column {
-                    for (item in currencyList) {
-                        Row(modifier = Modifier
-                            .padding(4.dp)
-                            .clickable {
-                                when (item.name) {
-                                    "United States Dollar" -> {
-                                        secondCurrency = "USD"
-                                    }
+                Card {
+                    Column {
+                        for (item in currencyList) {
+                            Row(modifier = Modifier
+                                .padding(4.dp)
+                                .clickable {
+                                    when (item.name) {
+                                        "United States Dollar" -> {
+                                            secondCurrency = "USD"
+                                        }
 
-                                    "United Kingdom Pound" -> {
-                                        secondCurrency = "GBP"
-                                    }
+                                        "United Kingdom Pound" -> {
+                                            secondCurrency = "GBP"
+                                        }
 
-                                    "Euro" -> {
-                                        secondCurrency = "EUR"
-                                    }
+                                        "Euro" -> {
+                                            secondCurrency = "EUR"
+                                        }
 
-                                    "Japanese Yen" -> {
-                                        secondCurrency = "JPY"
-                                    }
+                                        "Japanese Yen" -> {
+                                            secondCurrency = "JPY"
+                                        }
 
-                                    "Australian Dollar" -> {
-                                        secondCurrency = "AUD"
-                                    }
+                                        "Australian Dollar" -> {
+                                            secondCurrency = "AUD"
+                                        }
 
-                                    "Canadian Dollar" -> {
-                                        secondCurrency = "CAD"
-                                    }
+                                        "Canadian Dollar" -> {
+                                            secondCurrency = "CAD"
+                                        }
 
-                                    "Swiss Franc" -> {
-                                        secondCurrency = "CHF"
-                                    }
+                                        "Swiss Franc" -> {
+                                            secondCurrency = "CHF"
+                                        }
 
-                                    "Chinese Yuan" -> {
-                                        secondCurrency = "CNY"
-                                    }
+                                        "Chinese Yuan" -> {
+                                            secondCurrency = "CNY"
+                                        }
 
-                                    "Indian Rupee" -> {
-                                        secondCurrency = "INR"
-                                    }
+                                        "Indian Rupee" -> {
+                                            secondCurrency = "INR"
+                                        }
 
-                                    "Brazilian Real" -> {
-                                        secondCurrency = "BRL"
-                                    }
+                                        "Brazilian Real" -> {
+                                            secondCurrency = "BRL"
+                                        }
 
-                                    else -> {
-                                        secondCurrency = "INR"
+                                        else -> {
+                                            secondCurrency = "INR"
+                                        }
                                     }
-                                }
-                            }) {
-                            Image(
-                                painter = painterResource(id = item.icon),
-                                contentDescription = item.name,
-                                modifier = Modifier.size(40.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = item.name,
-                                modifier = Modifier.align(Alignment.CenterVertically)
-                            )
+                                }) {
+                                Image(
+                                    painter = painterResource(id = item.icon),
+                                    contentDescription = item.name,
+                                    modifier = Modifier.size(40.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = item.name,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
                         }
                     }
                 }
