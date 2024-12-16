@@ -83,16 +83,16 @@ fun Result(
                 .fillMaxSize()
                 .background(Color(0xFF0201D4))
         ) {
-            Spacer(modifier = Modifier.height(100.dp))
-            Column(Modifier.padding(16.dp)) {
+            Spacer(modifier = Modifier.height(80.dp))
+            Column(Modifier.padding(32.dp)) {
                 Text(
-                    text = "Result",
+                    text = "Conversion Result",
                     fontFamily = poppins,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 24.sp,
                     color = Color.White
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     text = currentCurrency!!,
                     fontFamily = poppins,
@@ -124,7 +124,9 @@ fun Result(
                         ),
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(30.dp).clickable {
+                            showList.value = true
+                        }
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     TextField(
@@ -144,21 +146,25 @@ fun Result(
                     )
                 }
                 Spacer(modifier = Modifier.height(16.dp))
-                Icon(painter = painterResource(id = R.drawable.swap), contentDescription = "swap",
-                    tint = Color.White, modifier = Modifier
+                Icon(
+                    painter = painterResource(id = R.drawable.swap),
+                    contentDescription = "swap",
+                    tint = Color.White,
+                    modifier = Modifier
                         .padding(16.dp)
                         .size(40.dp)
                         .clickable {
                             val tempCurrency = currentCurrency
-                            if (tempCurrency != null) {
-                                secondCurrency = tempCurrency
-                            }
                             currentCurrency = secondCurrency
+                            secondCurrency = tempCurrency!!
 
-                            val tempPrice = price
-                            result = tempPrice
-                            price = result
-                        })
+                            val amount = price.toDoubleOrNull()
+                            if (amount != null && currentCurrency != null) {
+                                val convertedValue = vm.convertCurrency(amount, currentCurrency!!, secondCurrency)
+                                result = "%.2f".format(convertedValue)
+                            }
+                        }
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = secondCurrency,
@@ -191,7 +197,9 @@ fun Result(
                         ),
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(30.dp).clickable {
+                            showList2.value = true
+                        }
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     TextField(
