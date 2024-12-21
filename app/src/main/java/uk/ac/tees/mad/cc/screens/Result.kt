@@ -8,11 +8,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -67,6 +73,8 @@ fun Result(
         mutableStateOf("0")
     }
 
+    val scroll = rememberScrollState()
+
     LaunchedEffect(key1 = price) {
         val amount = price.toDoubleOrNull()
         if (amount != null && currentCurrency != null) {
@@ -82,6 +90,7 @@ fun Result(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color(0xFF0201D4))
+                .verticalScroll(scroll)
         ) {
             Spacer(modifier = Modifier.height(80.dp))
             Column(Modifier.padding(32.dp)) {
@@ -124,9 +133,11 @@ fun Result(
                         ),
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(30.dp).clickable {
-                            showList.value = true
-                        }
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                showList.value = true
+                            }
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     TextField(
@@ -160,7 +171,8 @@ fun Result(
 
                             val amount = price.toDoubleOrNull()
                             if (amount != null && currentCurrency != null) {
-                                val convertedValue = vm.convertCurrency(amount, currentCurrency!!, secondCurrency)
+                                val convertedValue =
+                                    vm.convertCurrency(amount, currentCurrency!!, secondCurrency)
                                 result = "%.2f".format(convertedValue)
                             }
                         }
@@ -197,9 +209,11 @@ fun Result(
                         ),
                         contentDescription = null,
                         tint = Color.White,
-                        modifier = Modifier.size(30.dp).clickable {
-                            showList2.value = true
-                        }
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clickable {
+                                showList2.value = true
+                            }
                     )
                     Spacer(modifier = Modifier.width(16.dp))
                     TextField(
@@ -218,6 +232,15 @@ fun Result(
                         )
                     )
                 }
+            }
+            Button(onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(Color.White),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                Text(text = "Save to Device", color = Color.Black)
             }
         }
         if (showList.value) {
