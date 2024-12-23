@@ -45,11 +45,8 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @Composable
 fun Home(vm: AppViewModel, navController: NavHostController) {
-    vm.fetchLatestRates()
     var amount by remember { mutableStateOf("") }
     var fromCurrency by remember { mutableStateOf("EUR") }
-    var toCurrency by remember { mutableStateOf("USD") }
-    var convertedAmount by remember { mutableStateOf<Double?>(null) }
 
     Scaffold { iv ->
         Column(

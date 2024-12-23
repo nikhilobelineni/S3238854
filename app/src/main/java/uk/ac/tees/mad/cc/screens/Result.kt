@@ -1,5 +1,6 @@
 package uk.ac.tees.mad.cc.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -78,8 +81,10 @@ fun Result(
     LaunchedEffect(key1 = price) {
         val amount = price.toDoubleOrNull()
         if (amount != null && currentCurrency != null) {
+            Log.d("Result", "Amount: $amount, Currency: $currentCurrency")
             val convertedValue = vm.convertCurrency(amount, currentCurrency!!, secondCurrency)
             result = "%.2f".format(convertedValue)
+            Log.d("Result", "Converted value: $convertedValue")
         } else {
             result = "Invalid input"
         }
@@ -92,7 +97,17 @@ fun Result(
                 .background(Color(0xFF0201D4))
                 .verticalScroll(scroll)
         ) {
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(40.dp))
+            Icon(
+                imageVector = Icons.Rounded.KeyboardArrowLeft,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(horizontal = 14.dp)
+                    .size(30.dp)
+                    .clickable { navController.popBackStack() },
+                tint = Color.White
+            )
+            Spacer(modifier = Modifier.height(20.dp))
             Column(Modifier.padding(32.dp)) {
                 Text(
                     text = "Conversion Result",
@@ -233,7 +248,10 @@ fun Result(
                     )
                 }
             }
-            Button(onClick = { /*TODO*/ },
+            Button(
+                onClick = {
+                    vm.addCurrencyHistory(currentCurrency!!, secondCurrency, price.toDouble(), result.toDouble(), "Today")
+                },
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(Color.White),
                 modifier = Modifier

@@ -12,7 +12,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.Dispatcher
 import uk.ac.tees.mad.cc.data.CurrencyApiService
+import uk.ac.tees.mad.cc.data.CurrencyDao
+import uk.ac.tees.mad.cc.data.CurrencyHistory
 import uk.ac.tees.mad.cc.model.CurrencyResponse
 import uk.ac.tees.mad.cc.model.Data
 import javax.inject.Inject
@@ -21,7 +24,8 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(
     private val currencyApiService: CurrencyApiService,
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val currencyDao: CurrencyDao
 ) : ViewModel() {
 
     val isLoading = mutableStateOf(false)
@@ -29,9 +33,11 @@ class AppViewModel @Inject constructor(
 
     val currencyRates = MutableStateFlow<CurrencyResponse?>(null)
 
+    val currencyHistory = MutableStateFlow<List<CurrencyHistory>>(emptyList())
+
 
     init {
-        fetchLatestRates()
+        fetchhLatestRates()
         val currentUser = auth.currentUser
         if (currentUser != null) {
             isSignedIn.value = true
@@ -137,12 +143,12 @@ class AppViewModel @Inject constructor(
     }
 
 
-    fun fetchLatestRates() {
+    fun fetchhLatestRates() {
         Log.d("AppViewModel", "Fetching latest rates...")
         viewModelScope.launch {
             try {
                 val response = currencyApiService.getLatestRates(
-                    apiKey = "cur_live_5sd2N8xnqJyI8ozbrxWkHqrbzHeFvMlSEANNMEtM",
+                    apiKey = "cur_live_cvTXX6H8SuyvvrawW0402uVdS97Gqmzq83Q7O6nR",
                     currencies = "USD,EUR,GBP,JPY,AUD,CAD,CHF,CNY,INR,BRL"
                 )
                 currencyRates.value = response
@@ -150,6 +156,38 @@ class AppViewModel @Inject constructor(
             } catch (e: Exception) {
                 Log.e("AppViewModel", "Error fetching latest rates", e)
             }
+        }
+    }
+
+    fun addCurrencyHistory(fromCurrency: String, toCurrency: String, amount: Double, result: Double, date: String) {
+        viewModelScope.launch {
+            try {
+                currencyDao.insertHistory(
+                    CurrencyHistory(
+                        fromCurrency = fromCurrency,
+                        toCurrency = toCurrency,
+                        amount = amount,
+                        result = result,
+                        date = date
+                    )
+                )
+                getCurrencyHistory()
+            } catch (e: Exception) {
+                Log.e("AddCurrencyHistory", "Error inserting currency history", e)
+            }
+        }
+    }
+
+    fun getCurrencyHistory() {
+        viewModelScope.launch {
+            currencyHistory.value = currencyDao.getAllHistory()
+            Log.d("AppViewModel", "Currency history: ${currencyHistory.value}")
+        }
+    }
+
+    fun deleteCurrencyHistory(history: CurrencyHistory) {
+        viewModelScope.launch {
+            currencyDao.deleteHistory(history)
         }
     }
 }

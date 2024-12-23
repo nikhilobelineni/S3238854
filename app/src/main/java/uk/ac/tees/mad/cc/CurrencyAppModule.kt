@@ -1,5 +1,7 @@
 package uk.ac.tees.mad.cc
 
+import android.content.Context
+import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -8,10 +10,13 @@ import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import uk.ac.tees.mad.cc.data.CurrencyApiService
+import uk.ac.tees.mad.cc.data.CurrencyDao
+import uk.ac.tees.mad.cc.data.CurrencyHistoryDatabase
 import javax.inject.Singleton
 
 @Module
@@ -44,4 +49,19 @@ object NetworkModule {
     fun providesFirestore() : FirebaseFirestore = Firebase.firestore
 
 
+    @Singleton
+    @Provides
+    fun provideCurrencyHistoryDatabase(@ApplicationContext context: Context): CurrencyHistoryDatabase {
+        return Room.databaseBuilder(
+            context.applicationContext,
+            CurrencyHistoryDatabase::class.java,
+            "currency_history_database"
+        ).build()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCurrencyDao(database: CurrencyHistoryDatabase): CurrencyDao {
+        return database.currencyDao()
+    }
 }
