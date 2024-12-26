@@ -1,54 +1,86 @@
 package uk.ac.tees.mad.cc.screens
 
-import androidx.compose.runtime.Composable
+import android.content.Context
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 
-@Composable
-fun BiometricLockScreen(onAuthenticationSuccess: () -> Unit, onAuthenticationError: () -> Unit) {
-    val context = LocalContext.current
-    val executor = ContextCompat.getMainExecutor(context)
-    var authenticationSucceeded by remember { mutableStateOf(false) }
 
-    val biometricPrompt = remember {
-        BiometricPrompt(context as ComponentActivity, executor, object : BiometricPrompt.AuthenticationCallback() {
-            override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                super.onAuthenticationError(errorCode, errString)
-                onAuthenticationError()
-            }
+class BiometricLockScreen(private val context : Context) {
 
-            override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                super.onAuthenticationSucceeded(result)
-                authenticationSucceeded = true
-                onAuthenticationSuccess()
-            }
+    private lateinit var promptInfo : BiometricPrompt.PromptInfo
+    private val biometricManager = BiometricManager.from(context)
+    private lateinit var biometricPrompt : BiometricPrompt
 
-            override fun onAuthenticationFailed() {
-                super.onAuthenticationFailed()
-                // Handle failed authentication attempts here
-            }
-        })
+
+    fun isBiometricAvailable() : BiometricAuthStatus {
+        return when(biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)){
+            BiometricManager.BIOMETRIC_SUCCESS -> BiometricAuthStatus.READY
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> BiometricAuthStatus.NOT_AVAILABLE
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> BiometricAuthStatus.TEMP_NOT_AVAILABLE
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> BiometricAuthStatus.AVAILABLE_BUT_NOT_ENROLLED
+            else -> BiometricAuthStatus.NOT_AVAILABLE
+        }
     }
 
-    LaunchedEffect(Unit) {
-        val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Unlock Your App")
-            .setSubtitle("Use your fingerprint to unlock")
-            .setNegativeButtonText("Cancel")
+    fun promptBiometricAuth(
+        title : String,
+        description : String,
+        negativeButtonText : String,
+        fragmentActivity: FragmentActivity,
+        onSuccess : (result : BiometricPrompt.AuthenticationResult) -> Unit,
+        onFailed : () -> Unit,
+        onError : (errorCode: Int, errorString: String) -> Unit
+    ){
+        when(isBiometricAvailable()){
+            BiometricAuthStatus.NOT_AVAILABLE -> {
+                onError(BiometricAuthStatus.NOT_AVAILABLE.id, "Not Available")
+                return
+            }
+            BiometricAuthStatus.TEMP_NOT_AVAILABLE -> {
+                onError(BiometricAuthStatus.TEMP_NOT_AVAILABLE.id, "Not Available at this moment")
+                return
+            }
+            BiometricAuthStatus.AVAILABLE_BUT_NOT_ENROLLED -> {
+                onError(BiometricAuthStatus.AVAILABLE_BUT_NOT_ENROLLED.id, "Add fingerprint first")
+                return
+            }
+            else -> Unit
+        }
+        biometricPrompt = BiometricPrompt(
+            fragmentActivity,
+            object  : BiometricPrompt.AuthenticationCallback(){
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    onFailed()
+                }
+
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    onSuccess(result)
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    onError(errorCode, errString.toString())
+                }
+            }
+        )
+        promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle(title)
+            .setSubtitle(description)
+            .setNegativeButtonText(negativeButtonText)
             .build()
-
-        if (BiometricManager.from(context).canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS) {
-            biometricPrompt.authenticate(promptInfo)
-        } else {
-            onAuthenticationError()
-        }
+        biometricPrompt.authenticate(promptInfo)
     }
+}
 
-    // UI that will be shown while biometric authentication is taking place
-    if (!authenticationSucceeded) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Authenticating...", fontWeight = FontWeight.Bold)
-        }
-    }
+
+enum class BiometricAuthStatus(val id: Int) {
+    READY(1),
+    NOT_AVAILABLE(-1),
+    TEMP_NOT_AVAILABLE(-2),
+    AVAILABLE_BUT_NOT_ENROLLED(-3),
+
 }
