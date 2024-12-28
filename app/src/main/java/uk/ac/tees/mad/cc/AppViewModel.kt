@@ -18,6 +18,7 @@ import uk.ac.tees.mad.cc.data.CurrencyDao
 import uk.ac.tees.mad.cc.data.CurrencyHistory
 import uk.ac.tees.mad.cc.model.CurrencyResponse
 import uk.ac.tees.mad.cc.model.Data
+import uk.ac.tees.mad.cc.model.User
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,22 +26,29 @@ class AppViewModel @Inject constructor(
     private val currencyApiService: CurrencyApiService,
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val currencyDao: CurrencyDao
+    private val currencyDao: CurrencyDao,
 ) : ViewModel() {
 
     val isLoading = mutableStateOf(false)
     val isSignedIn = mutableStateOf(false)
-
     val currencyRates = MutableStateFlow<CurrencyResponse?>(null)
-
     val currencyHistory = MutableStateFlow<List<CurrencyHistory>>(emptyList())
+    val userData = mutableStateOf<User>(User())
+    var isDarkTheme = mutableStateOf(false)
+        private set
 
+    fun toggleTheme(isDark: Boolean) {
+        isDarkTheme.value = isDark
+        // Save the theme preference in SharedPreferences
+        // (This part can be added as needed)
+    }
 
     init {
         fetchhLatestRates()
         val currentUser = auth.currentUser
         if (currentUser != null) {
             isSignedIn.value = true
+            fetchUserData()
         }
     }
 
@@ -56,7 +64,8 @@ class AppViewModel @Inject constructor(
                     "email" to email,
                     "password" to password,
                     "number" to number,
-                    "uid" to userId
+                    "uid" to userId,
+                    "profile" to ""
                 )
 
                 userRef.set(userMap)
@@ -112,7 +121,13 @@ class AppViewModel @Inject constructor(
     }
 
     fun fetchUserData(){
-
+        firestore.collection("user").document(auth.currentUser!!.uid).get().addOnSuccessListener {
+            val tempData = it.toObject(User::class.java)
+            userData.value = tempData!!
+            Log.d("fetchUserData", "User data fetched: $tempData")
+        }.addOnFailureListener {
+            Log.e("fetchUserData", "Error fetching user data", it)
+        }
     }
 
     fun convertCurrency(amount: Double, fromCurrency: String, toCurrency: String): Double? {

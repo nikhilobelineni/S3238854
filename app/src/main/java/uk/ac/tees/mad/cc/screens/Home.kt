@@ -45,6 +45,7 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @Composable
 fun Home(vm: AppViewModel, navController: NavHostController) {
+    val userData = vm.userData
     var amount by remember { mutableStateOf("") }
     var fromCurrency by remember { mutableStateOf("EUR") }
 
@@ -60,7 +61,7 @@ fun Home(vm: AppViewModel, navController: NavHostController) {
                     .padding(12.dp)
             ) {
                 Text(
-                    text = "Hello",
+                    text = "Hello ${userData.value.name}",
                     fontFamily = poppins,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 25.sp
@@ -68,7 +69,9 @@ fun Home(vm: AppViewModel, navController: NavHostController) {
                 Spacer(modifier = Modifier.weight(1f))
                 androidx.compose.material3.Icon(
                     imageVector = Icons.Rounded.Person, contentDescription = "person",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp).clickable {
+                        navController.navigate(NavigationItems.Profile.route)
+                    }
                 )
 
             }
