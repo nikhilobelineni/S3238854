@@ -1,7 +1,6 @@
 package uk.ac.tees.mad.cc
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
@@ -11,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import uk.ac.tees.mad.cc.screens.Authentication
 import uk.ac.tees.mad.cc.screens.Home
 import uk.ac.tees.mad.cc.screens.LogIn
 import uk.ac.tees.mad.cc.screens.Result
@@ -20,11 +20,12 @@ import uk.ac.tees.mad.cc.ui.theme.CurrencyConverterAppTheme
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val biometricAuthentication = BiometricLockScreen(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             CurrencyConverterAppTheme {
-                navigate()
+                navigate(biometricAuthentication)
             }
         }
     }
@@ -39,12 +40,13 @@ sealed class NavigationItems(val route : String){
     object Result : NavigationItems(route = "result/{currency}/{fromCurrency}"){
         fun createRoute(currency : String, fromCurrency : String) = "result/$currency/$fromCurrency"
     }
+    object Authentication : NavigationItems(route = "authentication")
 }
 
 
 
 @Composable
-fun navigate(){
+fun navigate(biometricAuthentication : BiometricLockScreen){
     val navController = rememberNavController()
     val vm : AppViewModel = viewModel()
     NavHost(navController = navController, startDestination = NavigationItems.Splash.route){
@@ -64,6 +66,9 @@ fun navigate(){
             val currency = it.arguments?.getString("currency")
             val fromCurrency = it.arguments?.getString("fromCurrency")
             Result(vm, navController, currency, fromCurrency)
+        }
+        composable(NavigationItems.Authentication.route){
+            Authentication(vm, navController,biometricAuthentication)
         }
     }
 }

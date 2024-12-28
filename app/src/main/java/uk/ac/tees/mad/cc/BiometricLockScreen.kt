@@ -1,21 +1,20 @@
-package uk.ac.tees.mad.cc.screens
+package uk.ac.tees.mad.cc
 
 import android.content.Context
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.fragment.app.FragmentActivity
 
 
 class BiometricLockScreen(private val context : Context) {
 
-    private lateinit var promptInfo : BiometricPrompt.PromptInfo
-    private val biometricManager = BiometricManager.from(context)
-    private lateinit var biometricPrompt : BiometricPrompt
+    private val biometricsManager = BiometricManager.from(context)
+    private lateinit var promptInformation : BiometricPrompt.PromptInfo
+    private lateinit var biometricsPrompt : BiometricPrompt
 
 
     fun isBiometricAvailable() : BiometricAuthStatus {
-        return when(biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)){
+        return when(biometricsManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)){
             BiometricManager.BIOMETRIC_SUCCESS -> BiometricAuthStatus.READY
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> BiometricAuthStatus.NOT_AVAILABLE
             BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> BiometricAuthStatus.TEMP_NOT_AVAILABLE
@@ -48,7 +47,7 @@ class BiometricLockScreen(private val context : Context) {
             }
             else -> Unit
         }
-        biometricPrompt = BiometricPrompt(
+        biometricsPrompt = BiometricPrompt(
             fragmentActivity,
             object  : BiometricPrompt.AuthenticationCallback(){
                 override fun onAuthenticationFailed() {
@@ -67,12 +66,12 @@ class BiometricLockScreen(private val context : Context) {
                 }
             }
         )
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
+        promptInformation = BiometricPrompt.PromptInfo.Builder()
             .setTitle(title)
             .setSubtitle(description)
             .setNegativeButtonText(negativeButtonText)
             .build()
-        biometricPrompt.authenticate(promptInfo)
+        biometricsPrompt.authenticate(promptInformation)
     }
 }
 
