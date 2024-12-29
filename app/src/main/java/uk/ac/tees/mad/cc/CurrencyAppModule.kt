@@ -64,4 +64,10 @@ object NetworkModule {
     fun provideCurrencyDao(database: CurrencyHistoryDatabase): CurrencyDao {
         return database.currencyDao()
     }
+
+    @Singleton
+    @Provides
+    fun providesContext (@ApplicationContext context: Context) : Context {
+        return context
+    }
 }

@@ -1,11 +1,14 @@
 package uk.ac.tees.mad.cc
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
@@ -24,10 +27,12 @@ import uk.ac.tees.mad.cc.ui.theme.CurrencyConverterAppTheme
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val biometricAuthentication = BiometricLockScreen(this)
+        val viewModel: AppViewModel by viewModels()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            CurrencyConverterAppTheme(darkTheme = false) {
+            val isDarkTheme = viewModel.isDarkModeOn.collectAsState()
+            CurrencyConverterAppTheme(darkTheme = isDarkTheme.value) {
                 navigate(biometricAuthentication)
             }
         }

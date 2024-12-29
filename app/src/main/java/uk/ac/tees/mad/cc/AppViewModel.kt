@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import okhttp3.Dispatcher
 import uk.ac.tees.mad.cc.data.CurrencyApiService
@@ -27,6 +28,7 @@ class AppViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
     private val currencyDao: CurrencyDao,
+    private val context: Context
 ) : ViewModel() {
 
     val isLoading = mutableStateOf(false)
@@ -34,13 +36,15 @@ class AppViewModel @Inject constructor(
     val currencyRates = MutableStateFlow<CurrencyResponse?>(null)
     val currencyHistory = MutableStateFlow<List<CurrencyHistory>>(emptyList())
     val userData = mutableStateOf<User>(User())
-    var isDarkTheme = mutableStateOf(false)
-        private set
+    private val sharedPref = context.getSharedPreferences("Currency_Conversion_app", Context.MODE_PRIVATE)
+    private val _isDarkModeOn = MutableStateFlow(sharedPref.getBoolean("isDarkModeOn", false))
+    val isDarkModeOn: StateFlow<Boolean> = _isDarkModeOn
 
-    fun toggleTheme(isDark: Boolean) {
-        isDarkTheme.value = isDark
-        // Save the theme preference in SharedPreferences
-        // (This part can be added as needed)
+    // Other existing code...
+
+    fun toggleTheme(isDarkMode: Boolean) {
+        _isDarkModeOn.value = isDarkMode
+        sharedPref.edit().putBoolean("isDarkModeOn", isDarkMode).apply()
     }
 
     init {

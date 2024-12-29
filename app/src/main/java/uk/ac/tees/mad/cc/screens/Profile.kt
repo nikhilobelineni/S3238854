@@ -12,15 +12,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -40,6 +45,8 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
     var isAppLockOn by remember {
         mutableStateOf(sharedPref.getBoolean("isAppLockOn", false))
     }
+    val isDarkModeOn by vm.isDarkModeOn.collectAsState()
+
 
     Column(Modifier.fillMaxSize()) {
         if (userData.value.profile.isNotEmpty()) {
@@ -76,7 +83,7 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
             Text(text = "Number: ${userData.value.number}")
             Spacer(modifier = Modifier.height(8.dp))
             Row {
-                Text(text = "App Lock: ")
+                Text(text = "App Lock: ", modifier = Modifier.align(Alignment.CenterVertically))
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
                     checked = isAppLockOn,
@@ -85,14 +92,25 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
                         sharedPref.edit().putBoolean("isAppLockOn", it).apply()
                     })
             }
+            Spacer(modifier = Modifier.height(8.dp))
             Row {
-                Text(text = "Dark Mode")
+                Text(text = "Dark Mode: ", modifier = Modifier.align(Alignment.CenterVertically))
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
-                    checked = vm.isDarkTheme.value,
-                    onCheckedChange = {
-                        vm.toggleTheme(it)
-                    })
+                    checked = isDarkModeOn,
+                    onCheckedChange = { vm.toggleTheme(it) })
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+            Row {
+                Text(text = "Delete History", modifier = Modifier.align(Alignment.CenterVertically))
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
+            }
+            Spacer(modifier = Modifier.height(15.dp))
+            Row {
+                Text(text = "Log Out", modifier = Modifier.align(Alignment.CenterVertically))
+                Spacer(modifier = Modifier.weight(1f))
+                Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
             }
         }
     }
