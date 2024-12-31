@@ -1,6 +1,7 @@
 package uk.ac.tees.mad.cc
 
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +30,8 @@ class AppViewModel @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
     private val currencyDao: CurrencyDao,
-    private val context: Context
+    private val context: Context,
+    private val storage : FirebaseStorage
 ) : ViewModel() {
 
     val isLoading = mutableStateOf(false)
@@ -205,6 +208,23 @@ class AppViewModel @Inject constructor(
     fun deleteCurrencyHistory(history: CurrencyHistory) {
         viewModelScope.launch {
             currencyDao.deleteHistory(history)
+        }
+    }
+
+    fun uploadProfile(contextt: Context,imageUri: Uri?) {
+        if (imageUri != null){
+            isLoading.value = true
+            storage.reference.child("profile_images/${auth.currentUser!!.uid}").putFile(imageUri).addOnSuccessListener {
+                val downloadUrl = storage.reference.child("profile_images/${auth.currentUser!!.uid}").downloadUrl
+                firestore.collection("user").document(auth.currentUser!!.uid).update("profile", downloadUrl.toString())
+                isLoading.value = false
+                fetchUserData()
+                Toast.makeText(contextt, "Profile updated", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener {
+                isLoading.value = false
+                Toast.makeText(contextt, "Failed to update profile", Toast.LENGTH_SHORT).show()
+                Log.e("uploadProfile", "Error uploading profile", it)
+            }
         }
     }
 }
