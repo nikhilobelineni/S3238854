@@ -1,5 +1,6 @@
 package uk.ac.tees.mad.cc.screens
 
+import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -24,6 +25,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -39,11 +41,17 @@ import uk.ac.tees.mad.cc.ui.theme.poppins
 fun Splash(vm: AppViewModel, navController: NavHostController) {
     val scale = remember { Animatable(0.8f) }
     val alpha = remember { Animatable(0f) }
-
+    val context = LocalContext.current
+    val sharedPreference = context.getSharedPreferences("Currency_Conversion_app", Context.MODE_PRIVATE)
+    val isAppLockEnabled = sharedPreference.getBoolean("isAppLockOn", false)
 
     LaunchedEffect(key1 = true) {
-        delay(3000)
-        navController.navigate(NavigationItems.LogIn.route)
+        if (isAppLockEnabled) {
+            navController.navigate(NavigationItems.Authentication.route)
+        } else {
+            delay(3000)
+            navController.navigate(NavigationItems.LogIn.route)
+        }
     }
     LaunchedEffect(Unit) {
         scale.animateTo(

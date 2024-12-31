@@ -1,11 +1,9 @@
 package uk.ac.tees.mad.cc
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import uk.ac.tees.mad.cc.screens.Authentication
+import uk.ac.tees.mad.cc.screens.EditProfile
 import uk.ac.tees.mad.cc.screens.Home
 import uk.ac.tees.mad.cc.screens.LogIn
 import uk.ac.tees.mad.cc.screens.Profile
@@ -50,6 +49,7 @@ sealed class NavigationItems(val route : String){
     }
     object Authentication : NavigationItems(route = "authentication")
     object Profile : NavigationItems(route = "profile")
+    object EditProfile : NavigationItems(route = "editProfile")
 }
 
 
@@ -82,6 +82,9 @@ fun navigate(biometricAuthentication : BiometricLockScreen) {
             }
             composable(NavigationItems.Profile.route) {
                 Profile(navController, vm)
+            }
+            composable(NavigationItems.EditProfile.route){
+                EditProfile(navController, vm)
             }
         }
     }

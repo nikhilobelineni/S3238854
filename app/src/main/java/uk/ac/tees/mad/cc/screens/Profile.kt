@@ -31,11 +31,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import uk.ac.tees.mad.cc.AppViewModel
+import uk.ac.tees.mad.cc.NavigationItems
 import uk.ac.tees.mad.cc.R
+import uk.ac.tees.mad.cc.ui.theme.poppins
 
 @Composable
 fun Profile(navController: NavHostController, vm: AppViewModel) {
@@ -67,7 +71,7 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
         Spacer(modifier = Modifier.height(20.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {navController.navigate(NavigationItems.EditProfile.route)},
                 modifier = Modifier.height(50.dp),
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(Color(0xFF066666))
@@ -76,14 +80,14 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
             }
         }
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Name: ${userData.value.name}")
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Email: ${userData.value.email}")
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Number: ${userData.value.number}")
+            Text(text = "Name: ${userData.value.name}", fontSize = 20.sp, fontFamily = poppins)
+            Spacer(modifier = Modifier.height(15.dp))
+            Text(text = "Email: ${userData.value.email}", fontFamily = poppins)
+            Spacer(modifier = Modifier.height(15.dp))
+            Text(text = "Number: ${userData.value.number}", fontFamily = poppins)
             Spacer(modifier = Modifier.height(8.dp))
             Row {
-                Text(text = "App Lock: ", modifier = Modifier.align(Alignment.CenterVertically))
+                Text(text = "App Lock: ", fontFamily = poppins, modifier = Modifier.align(Alignment.CenterVertically))
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
                     checked = isAppLockOn,
@@ -94,7 +98,7 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Row {
-                Text(text = "Dark Mode: ", modifier = Modifier.align(Alignment.CenterVertically))
+                Text(text = "Dark Mode: ", fontFamily = poppins, modifier = Modifier.align(Alignment.CenterVertically))
                 Spacer(modifier = Modifier.weight(1f))
                 Switch(
                     checked = isDarkModeOn,
@@ -102,13 +106,13 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
             }
             Spacer(modifier = Modifier.height(12.dp))
             Row {
-                Text(text = "Delete History", modifier = Modifier.align(Alignment.CenterVertically))
+                Text(text = "Delete History", fontFamily = poppins, modifier = Modifier.align(Alignment.CenterVertically))
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
             }
             Spacer(modifier = Modifier.height(15.dp))
             Row {
-                Text(text = "Log Out", modifier = Modifier.align(Alignment.CenterVertically))
+                Text(text = "Log Out", fontFamily = poppins, modifier = Modifier.align(Alignment.CenterVertically))
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
             }

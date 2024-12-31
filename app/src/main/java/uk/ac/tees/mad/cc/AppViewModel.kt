@@ -40,8 +40,6 @@ class AppViewModel @Inject constructor(
     private val _isDarkModeOn = MutableStateFlow(sharedPref.getBoolean("isDarkModeOn", false))
     val isDarkModeOn: StateFlow<Boolean> = _isDarkModeOn
 
-    // Other existing code...
-
     fun toggleTheme(isDarkMode: Boolean) {
         _isDarkModeOn.value = isDarkMode
         sharedPref.edit().putBoolean("isDarkModeOn", isDarkMode).apply()
