@@ -211,20 +211,48 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun uploadProfile(contextt: Context,imageUri: Uri?) {
-        if (imageUri != null){
+    fun uploadProfile(context: Context, imageUri: Uri?) {
+        if (imageUri != null) {
             isLoading.value = true
-            storage.reference.child("profile_images/${auth.currentUser!!.uid}").putFile(imageUri).addOnSuccessListener {
-                val downloadUrl = storage.reference.child("profile_images/${auth.currentUser!!.uid}").downloadUrl
-                firestore.collection("user").document(auth.currentUser!!.uid).update("profile", downloadUrl.toString())
-                isLoading.value = false
-                fetchUserData()
-                Toast.makeText(contextt, "Profile updated", Toast.LENGTH_SHORT).show()
-            }.addOnFailureListener {
-                isLoading.value = false
-                Toast.makeText(contextt, "Failed to update profile", Toast.LENGTH_SHORT).show()
-                Log.e("uploadProfile", "Error uploading profile", it)
-            }
+            val profileImageRef = storage.reference.child("profile_images/${auth.currentUser!!.uid}")
+
+            profileImageRef.putFile(imageUri)
+                .addOnSuccessListener { uploadTask ->
+                    uploadTask.storage.downloadUrl.addOnSuccessListener { downloadUrl ->
+                        firestore.collection("user").document(auth.currentUser!!.uid).update("profile", downloadUrl.toString())
+                            .addOnSuccessListener {
+                                isLoading.value = false
+                                Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                isLoading.value = false
+                                Toast.makeText(context, "Failed to update profile", Toast.LENGTH_SHORT).show()
+                                Log.e("uploadProfile", "Error updating Firestore with profile URL", e)
+                            }
+                    }.addOnFailureListener { e ->
+                        isLoading.value = false
+                        Toast.makeText(context, "Failed to get download URL", Toast.LENGTH_SHORT).show()
+                        Log.e("uploadProfile", "Error getting download URL", e)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    isLoading.value = false
+                    Toast.makeText(context, "Failed to upload profile image", Toast.LENGTH_SHORT).show()
+                    Log.e("uploadProfile", "Error uploading profile image", e)
+                }
+        }
+    }
+
+    fun updateUserData(context: Context,name: String, number : String){
+        isLoading.value = true
+        firestore.collection("user").document(auth.currentUser!!.uid).update("name",name,"number",number).addOnSuccessListener {
+            isLoading.value = false
+            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+            fetchUserData()
+        }.addOnFailureListener {
+            isLoading.value = false
+            Toast.makeText(context, "Failed to update profile", Toast.LENGTH_SHORT).show()
+            Log.e("updateUserData", "Error updating Firestore with profile URL", it)
         }
     }
 }
