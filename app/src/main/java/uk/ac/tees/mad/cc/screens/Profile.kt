@@ -120,6 +120,18 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
                 }
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(modifier = Modifier.clickable {
+                    navController.navigate(NavigationItems.History.route)
+                }) {
+                    Text(
+                        text = "Goto History",
+                        fontFamily = poppins,
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Spacer(modifier = Modifier.weight(1f))
+                    Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(modifier = Modifier.clickable {
                     vm.deleteCurrencyHistory()
                     Toast.makeText(context, "History Deleted", Toast.LENGTH_SHORT).show()
                 }) {
@@ -136,7 +148,9 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
                     vm.signOut()
                     sharedPref.edit().putBoolean("isAppLockOn", false).apply()
                     sharedPref.edit().putBoolean("isDarkModeOn", false).apply()
-                    navController.navigate(NavigationItems.LogIn.route)
+                    navController.navigate(NavigationItems.LogIn.route){
+                        popUpTo(0)
+                    }
                 }) {
                     Text(
                         text = "Log Out",
@@ -149,6 +163,8 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
             }
         }
         Icon(imageVector = Icons.Default.KeyboardArrowLeft, contentDescription = null,
-            modifier = Modifier.padding(26.dp).size(30.dp), tint = Color.White)
+            modifier = Modifier.padding(26.dp).size(30.dp).clickable {
+                navController.popBackStack()
+            }, tint = Color.White)
     }
 }

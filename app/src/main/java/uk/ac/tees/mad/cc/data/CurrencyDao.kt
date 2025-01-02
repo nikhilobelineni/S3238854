@@ -18,4 +18,7 @@ interface CurrencyDao {
     @Query("DELETE FROM currency_history")
     suspend fun deleteHistory()
 
+    @Delete
+    suspend fun delete(history: CurrencyHistory)
+
 }

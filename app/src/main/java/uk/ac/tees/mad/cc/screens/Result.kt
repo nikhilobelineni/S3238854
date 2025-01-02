@@ -1,6 +1,7 @@
 package uk.ac.tees.mad.cc.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -45,6 +47,8 @@ import uk.ac.tees.mad.cc.AppViewModel
 import uk.ac.tees.mad.cc.R
 import uk.ac.tees.mad.cc.currencyList
 import uk.ac.tees.mad.cc.ui.theme.poppins
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +79,7 @@ fun Result(
     var result by remember {
         mutableStateOf("0")
     }
-
+    val context = LocalContext.current
     val scroll = rememberScrollState()
 
     LaunchedEffect(key1 = price) {
@@ -250,7 +254,11 @@ fun Result(
             }
             Button(
                 onClick = {
-                    vm.addCurrencyHistory(currentCurrency!!, secondCurrency, price.toDouble(), result.toDouble(), "Today")
+                    val currentTimeMillis = System.currentTimeMillis()
+                    val dateFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
+                    val formattedDate = dateFormat.format(currentTimeMillis)
+                    vm.addCurrencyHistory(currentCurrency!!, secondCurrency, price.toDouble(), result.toDouble(), formattedDate)
+                    Toast.makeText(context, "Saved to history", Toast.LENGTH_SHORT).show()
                 },
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(Color.White),

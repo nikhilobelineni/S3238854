@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import uk.ac.tees.mad.cc.screens.Authentication
 import uk.ac.tees.mad.cc.screens.EditProfile
+import uk.ac.tees.mad.cc.screens.History
 import uk.ac.tees.mad.cc.screens.Home
 import uk.ac.tees.mad.cc.screens.LogIn
 import uk.ac.tees.mad.cc.screens.Profile
@@ -50,6 +51,7 @@ sealed class NavigationItems(val route : String){
     object Authentication : NavigationItems(route = "authentication")
     object Profile : NavigationItems(route = "profile")
     object EditProfile : NavigationItems(route = "editProfile")
+    object History : NavigationItems(route = "history")
 }
 
 
@@ -85,6 +87,9 @@ fun navigate(biometricAuthentication : BiometricLockScreen) {
             }
             composable(NavigationItems.EditProfile.route){
                 EditProfile(navController, vm)
+            }
+            composable(NavigationItems.History.route){
+                History(navController, vm)
             }
         }
     }

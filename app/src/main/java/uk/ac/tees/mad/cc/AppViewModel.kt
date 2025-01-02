@@ -50,6 +50,7 @@ class AppViewModel @Inject constructor(
 
     init {
         fetchhLatestRates()
+        getCurrencyHistory()
         val currentUser = auth.currentUser
         if (currentUser != null) {
             isSignedIn.value = true
@@ -208,6 +209,7 @@ class AppViewModel @Inject constructor(
     fun deleteCurrencyHistory() {
         viewModelScope.launch {
             currencyDao.deleteHistory()
+            getCurrencyHistory()
         }
     }
 
@@ -259,5 +261,12 @@ class AppViewModel @Inject constructor(
     fun signOut() {
         auth.signOut()
         isSignedIn.value = false
+    }
+
+    fun deleteHistory(item: CurrencyHistory) {
+        viewModelScope.launch {
+            currencyDao.delete(item)
+            getCurrencyHistory()
+        }
     }
 }
