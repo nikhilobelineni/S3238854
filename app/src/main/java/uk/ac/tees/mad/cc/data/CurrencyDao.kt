@@ -15,7 +15,7 @@ interface CurrencyDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHistory(history: CurrencyHistory)
 
-    @Query("DELETE * FROM currency_history")
+    @Query("DELETE FROM currency_history")
     suspend fun deleteHistory()
 
 }

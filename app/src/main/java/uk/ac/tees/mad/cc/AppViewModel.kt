@@ -205,9 +205,9 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun deleteCurrencyHistory(history: CurrencyHistory) {
+    fun deleteCurrencyHistory() {
         viewModelScope.launch {
-            currencyDao.deleteHistory(history)
+            currencyDao.deleteHistory()
         }
     }
 
@@ -254,5 +254,10 @@ class AppViewModel @Inject constructor(
             Toast.makeText(context, "Failed to update profile", Toast.LENGTH_SHORT).show()
             Log.e("updateUserData", "Error updating Firestore with profile URL", it)
         }
+    }
+
+    fun signOut() {
+        auth.signOut()
+        isSignedIn.value = false
     }
 }

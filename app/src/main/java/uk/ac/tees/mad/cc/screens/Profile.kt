@@ -1,7 +1,9 @@
 package uk.ac.tees.mad.cc.screens
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -117,7 +119,10 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
                         onCheckedChange = { vm.toggleTheme(it) })
                 }
                 Spacer(modifier = Modifier.height(12.dp))
-                Row {
+                Row(modifier = Modifier.clickable {
+                    vm.deleteCurrencyHistory()
+                    Toast.makeText(context, "History Deleted", Toast.LENGTH_SHORT).show()
+                }) {
                     Text(
                         text = "Delete History",
                         fontFamily = poppins,
@@ -127,7 +132,12 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
                     Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
                 }
                 Spacer(modifier = Modifier.height(15.dp))
-                Row {
+                Row(modifier = Modifier.clickable {
+                    vm.signOut()
+                    sharedPref.edit().putBoolean("isAppLockOn", false).apply()
+                    sharedPref.edit().putBoolean("isDarkModeOn", false).apply()
+                    navController.navigate(NavigationItems.LogIn.route)
+                }) {
                     Text(
                         text = "Log Out",
                         fontFamily = poppins,
