@@ -169,7 +169,7 @@ class AppViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val response = currencyApiService.getLatestRates(
-                    apiKey = "cur_live_cvTXX6H8SuyvvrawW0402uVdS97Gqmzq83Q7O6nR",
+                    apiKey = "cur_live_avfsgcK9Axh8wyiJfV8yTwTrcRJtcXWzxNtuV4xL",
                     currencies = "USD,EUR,GBP,JPY,AUD,CAD,CHF,CNY,INR,BRL"
                 )
                 currencyRates.value = response

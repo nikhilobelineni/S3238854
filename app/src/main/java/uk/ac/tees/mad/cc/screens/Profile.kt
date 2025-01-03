@@ -59,6 +59,7 @@ fun Profile(navController: NavHostController, vm: AppViewModel) {
 
     Box {
         Column(Modifier.fillMaxSize()) {
+            Spacer(modifier = Modifier.height(20.dp))
             if (userData.value.profile.isNotEmpty()) {
                 AsyncImage(
                     model = userData.value.profile, contentDescription = "profile_photo",
